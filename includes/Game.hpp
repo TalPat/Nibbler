@@ -10,11 +10,13 @@ class Game
 {
 private:
   std::string _libPath;
-  int _width, _height, _fps, _input;
+  int _width, _height, _fps, _input, _speed;
   long _startTime;
-  Food* food;
-  std::list<Snake*> snake;
-  bool _gameOver;
+  Food* _food;
+  std::list<Snake*> _snake;
+  bool _gameOver, _gameStarted;
+  void (*render)(Game), (*init)(int, int), (*endGame)(void);
+  int (*getInput)(void);
 public:
   Game();
   Game(const Game &obj);
@@ -23,7 +25,6 @@ public:
 
   void initialise(int x, int y);
   void gameLoop();
-  int getInput();
 };
 
 #endif
