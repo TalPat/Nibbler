@@ -1,7 +1,8 @@
 #include "Game.hpp"
 
-Game::Game(){
-  this->
+Game::Game():
+_libPath(""),
+{
 }
 
 Game::Game(const Game &obj){}
