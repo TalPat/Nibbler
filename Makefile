@@ -1,6 +1,10 @@
 NAME			=	nibbler
 SRCDIR		=	./src/
 SRC				=	main.cpp\
+						Game.cpp\
+						Entity.cpp\
+						Food.cpp\
+						Snake.cpp
 
 SRCPATH		:=	$(addprefix $(SRCDIR), $(SRC))
 OBJDIR		=	obj/
@@ -8,7 +12,7 @@ OBJ				=	$(SRC:%.cpp=%.o)
 OBJPATH		:=	$(addprefix $(OBJDIR), $(OBJ))
 
 HEADER		=	./includes/
-CFLAGS		=	-Wall -Werror -Wextra
+CFLAGS		=	#-Wall -Werror -Wextra
 CC				=	clang++
 INCLUDES	=	-I $(HEADER)
 

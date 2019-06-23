@@ -12,6 +12,9 @@ public:
   Snake(const Snake &obj);
   ~Snake();
   Snake& operator=(const Snake &obj);
+
+  void setDirection(int direction);
+  int getDirection(void) const;
 };
 
 #endif

@@ -1,3 +1,6 @@
+#ifndef ENTITY_HPP
+#define ENTITY_HPP
+
 class Entity
 {
 private:
@@ -9,9 +12,11 @@ public:
   ~Entity();
   Entity& operator=(const Entity &obj);
 
-  int getPosx(void);
-  int getPosy(void);
+  int getPosx(void) const;
+  int getPosy(void) const;
 
   void setPosx(int posx);
   void setPosy(int posy);
 };
+
+#endif
