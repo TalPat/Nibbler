@@ -58,7 +58,7 @@ void Game::initialise(int x, int y){
     this->_startTime = std::chrono::high_resolution_clock::now();
     this->_t1 = this->_startTime;
     this->_speed = 1.0;
-    //if (dlopen(this->_libPath.c_str(), RTLD_LAZY)); //assign functions to pointers
+    if (dlopen(this->_libPath.c_str(), RTLD_LAZY)); //assign functions to pointers
 }
 
 void Game::gameLoop(){
