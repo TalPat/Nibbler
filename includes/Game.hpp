@@ -17,7 +17,7 @@ private:
   Food* _food;
   std::list<Snake*> _snake;
   bool _gameOver, _gameStarted;
-  void (*render)(Game), (*init)(int, int), (*endGame)(void), (*closeWindow)(void);
+  void (*render)(Game*), (*init)(int, int), (*endGame)(void), (*closeWindow)(void), *_libhandle;
   int (*getInput)(void);
 public:
   Game();
@@ -29,6 +29,10 @@ public:
   void gameLoop();
   void checkCollision();
   void handleInput(int command);
+  void moveSnake();
+
+  Food* getFood(void);
+  std::list<Snake*> getSnake(void);
 };
 
 #endif
