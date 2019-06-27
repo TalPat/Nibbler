@@ -1,4 +1,4 @@
-#include "../includes/Game.hpp"
+#include "GameState.hpp"
 #include <ncurses.h>
 #include <iostream>
 
@@ -8,7 +8,7 @@ extern "C" void init(int x, int y) {
   initscr();
   curs_set(0);
   refresh();
-  win = newwin(y, x, 0, 0);
+  win = newwin(y+2, x+2, 0, 0);
   noecho();
   box(win, 0, 0);
   keypad(stdscr, true);
@@ -18,18 +18,14 @@ extern "C" void init(int x, int y) {
   nodelay(stdscr, true);
 }
 
-extern "C" void render(Game* game) {
-  std::list<Snake*>::iterator it;
+extern "C" void render(GameState* game) {
+  std::list<SnakeSt*>::iterator it;
   werase(win);
   box(win, 0 ,0);
-  /* */char c[2] = {game->getSnake().size() + '0'};
-  /* */ mvwprintw(win, 1, 1, c);
-  for (it = game->getSnake().begin(); it != game->getSnake().end(); it++) {
-    /* */std::cout << (*it)->getPosy() << std::endl;
-    mvwprintw(win, (*it)->getPosy(), (*it)->getPosx(), "O");
+  for (it = game->snake.begin(); it != game->snake.end(); it++) {
+    mvwprintw(win, (*it)->y + 1, (*it)->x + 1, "O");
   }
-    //* */std::cout << "y" << std::endl;
-  mvwprintw(win, game->getFood()->getPosy(), game->getFood()->getPosx(), "*");
+  mvwprintw(win, game->food->y + 1, game->food->x + 1, "*");
   wrefresh(win);
 }
 
@@ -38,7 +34,9 @@ extern "C" void endGame() {
 }
 
 extern "C" void closeWindow() {
-
+  werase(win);
+  wrefresh(win);
+  endwin();
 }
 
 extern "C" int getInput() {

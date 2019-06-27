@@ -6,9 +6,11 @@
 #include <unistd.h>
 
 Game::Game():
-_libPath("./dynamic_libraries/ncurses.dylib"), _fps(60), _input(0), _gameOver(false), _gameStarted(false) //.dylib for mac & .so for linux
+_libPath("./dlib1/ncurses.dylib"), _fps(60), _input(0), _gameOver(false), _gameStarted(false) //.dylib for mac & .so for linux
 {
     srand(time(NULL));
+    this->_gameState = new GameState;
+    this->_gameState->food = new FoodSt;
 }
 
 Game::Game(const Game &obj){
@@ -23,6 +25,7 @@ Game::Game(const Game &obj){
     this->_startTime = obj._startTime;
     this->_width = obj._width;
     this->_speed = obj._speed;
+    this->_gameState = obj._gameState;
 }
 
 Game::~Game(){
@@ -44,25 +47,27 @@ Game& Game::operator=(const Game &obj){
         this->_startTime = obj._startTime;
         this->_width = obj._width;
         this->_speed = obj._speed;
+        this->_gameState = obj._gameState;
     }
     return (*this);
 }
 
 void Game::initialise(int x, int y){
-    typedef void (*render_t)(Game*), (*init_t)(int, int), (*endGame_t)(void), (*closeWindow_t)(void);
+    typedef void (*render_t)(GameState*), (*init_t)(int, int), (*endGame_t)(void), (*closeWindow_t)(void);
     typedef int (*getInput_t)(void);
 
     this->_width = x;
     this->_height = y;
-    this->_food = new Food(rand()%(x-1)+1, rand()%(y-1)+1);
+    this->_food = new Food(rand()%(x), rand()%(y));
     this->_snake.push_back(new Snake(x/2, y/2));
     this->_snake.push_back(new Snake(x/2, y/2 + 1));
     this->_snake.push_back(new Snake(x/2, y/2 + 2));
-    // this->_snake.push_back(new Snake(x/2, y/2 + 3));
-    // this->_snake.push_back(new Snake(x/2, y/2 + 4));
+    this->_snake.push_back(new Snake(x/2, y/2 + 3));
+    this->_snake.push_back(new Snake(x/2, y/2 + 4));
+    //* */for (size_t i = 0; i < 9999; i++) this->_snake.push_back(new Snake(x/2, y/2 + 4));
     this->_startTime = std::chrono::high_resolution_clock::now();
     this->_t1 = this->_startTime;
-    this->_speed = 1.0;
+    this->_speed = 5.0;
     if ((this->_libhandle = dlopen(this->_libPath.c_str(), RTLD_LAZY))) {
         this->render = (render_t) dlsym(this->_libhandle, "render");
         this->init = (init_t) dlsym(this->_libhandle, "init");
@@ -78,23 +83,23 @@ void Game::initialise(int x, int y){
 
 void Game::gameLoop(){
     int i = 0;
-    int loopDelay = 100000 / this->_speed;
-    //* dont keep */long x = 0; 
+    int loopDelay = 1 / this->_speed;
+
     while (1){
 
         this->_t2 = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double> >(this->_t2 - this->_t1);
         if (time_span.count() > 1.0 / this->_speed) {
-            //get input, handle input, update game state
             this->handleInput(this->_input);
             this->_input = -1;
+            this->checkCollision();
             this->_t1 = std::chrono::high_resolution_clock::now();
-            //*  dont keep */ std::cout << "Game cycles" << i << std::endl; i++; std::cout << x << std::endl; x = 0; std::cout << time_span.count() << std::endl; x = 0;
         }
-        this->render(this);//render
-        //* dont keep */x++; 
+        this->updateGameState();
+        this->render(this->_gameState);
         usleep(loopDelay);
-        this->_input = this->getInput();
+        if ((i = this->getInput()) != -1)
+        this->_input = i;
     }
 
 }
@@ -115,20 +120,41 @@ void Game::handleInput(int command) {
     switch (command)
     {
     case 0:
-        this->_snake.front()->setDirection(0);
+        if (this->_snake.front()->getDirection() != 2)
+            this->_snake.front()->setDirection(0);
         this->moveSnake();
         break;
     case 1:
-        this->_snake.front()->setDirection(1);
+        if (this->_snake.front()->getDirection() != 3)
+            this->_snake.front()->setDirection(1);
         this->moveSnake();
         break;
     case 2:
-        this->_snake.front()->setDirection(2);
+        if (this->_snake.front()->getDirection() != 0)
+            this->_snake.front()->setDirection(2);
         this->moveSnake();
         break;
     case 3:
-        this->_snake.front()->setDirection(3);
+        if (this->_snake.front()->getDirection() != 1)
+            this->_snake.front()->setDirection(3);
         this->moveSnake();
+        break;
+    case 4:
+        this->closeWindow();
+        exit(1);
+        break;
+    case 5:
+        while (1) {
+            if (this->getInput() == 5) {
+                break;
+            }
+        }
+        break;
+    case 6:
+        break;
+    case 7:
+        break;
+    case 8:
         break;
     default:
         this->moveSnake();
@@ -143,7 +169,6 @@ void Game::moveSnake() {
     {
     case 0:
         for (std::list<Snake*>::reverse_iterator rit=this->_snake.rbegin(); ritNext!=(this->_snake.rend()); ++rit) {
-            /* */std::cout << "-sdf-";
             (*rit)->setPosx((*ritNext)->getPosx());
             (*rit)->setPosy((*ritNext)->getPosy());
             ++ritNext;
@@ -177,6 +202,41 @@ void Game::moveSnake() {
     
     default:
         break;
+    }
+}
+
+void Game::updateGameState() {
+    this->_gameState->food->x = this->_food->getPosx();
+    this->_gameState->food->y = this->_food->getPosy();
+    this->_gameState->snake.clear();
+    for (std::list<Snake*>::iterator it=this->_snake.begin(); it!=(this->_snake.end()); ++it) {
+        SnakeSt* mySnake = new SnakeSt;
+        mySnake->x = (*it)->getPosx();
+        mySnake->y = (*it)->getPosy();
+        mySnake->direction = (*it)->getDirection();
+        this->_gameState->snake.push_back(mySnake);
+    }
+}
+
+void Game::checkCollision() {
+    int snakex = this->_snake.front()->getPosx();
+    int snakey = this->_snake.front()->getPosy();
+    std::list<Snake*>::iterator it=this->_snake.begin();
+    it++;
+
+    if (snakex < 0 || snakex >= this->_width || snakey < 0 || snakey >= this->_height) {
+        exit(1);
+    }
+    for (; it!=(this->_snake.end()); ++it) {
+        if (snakex == (*it)->getPosx() && snakey == (*it)->getPosy()) {
+            this->closeWindow();
+            exit(1);
+        }
+    }
+    if (snakex == this->_food->getPosx() && snakey == this->_food->getPosy()) {
+        delete this->_food;
+        this->_food = new Food(rand()%(this->_width), rand()%(this->_height));
+        this->_snake.push_back(new Snake(-1, -1));
     }
 }
 

@@ -13,3 +13,5 @@ all: $(BINS)
 
 clean:
 	rm $(BINS)
+
+re: clean all

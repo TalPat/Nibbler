@@ -6,6 +6,7 @@
 #include <chrono>
 #include "Food.hpp"
 #include "Snake.hpp"
+#include "GameState.hpp"
 
 class Game
 {
@@ -17,8 +18,9 @@ private:
   Food* _food;
   std::list<Snake*> _snake;
   bool _gameOver, _gameStarted;
-  void (*render)(Game*), (*init)(int, int), (*endGame)(void), (*closeWindow)(void), *_libhandle;
+  void (*render)(GameState*), (*init)(int, int), (*endGame)(void), (*closeWindow)(void), *_libhandle;
   int (*getInput)(void);
+  GameState* _gameState;
 public:
   Game();
   Game(const Game &obj);
@@ -30,6 +32,7 @@ public:
   void checkCollision();
   void handleInput(int command);
   void moveSnake();
+  void updateGameState();
 
   Food* getFood(void);
   std::list<Snake*> getSnake(void);
