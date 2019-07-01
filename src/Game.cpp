@@ -53,12 +53,26 @@ Game& Game::operator=(const Game &obj){
 }
 
 void Game::initialise(int x, int y){
-    typedef void (*render_t)(GameState*), (*init_t)(int, int), (*endGame_t)(void), (*closeWindow_t)(void);
-    typedef int (*getInput_t)(void);
+    // typedef void (*render_t)(GameState*), (*init_t)(int, int), (*endGame_t)(void), (*closeWindow_t)(void);
+    // typedef int (*getInput_t)(void);
 
     this->_width = x;
     this->_height = y;
-    this->_food = new Food(rand()%(x), rand()%(y));
+    bool check = true;
+    int fx, fy;
+    while (check) {
+        fy = rand()%(this->_height);
+        fx = rand()%(this->_width); 
+        check = false;
+        for (std::list<Snake*>::iterator it=this->_snake.begin(); it!=(this->_snake.end()); ++it) {
+            if (fx == (*it)->getPosx() && fy == (*it)->getPosy()) {
+                check = true;
+                break;
+            }
+        }
+    }
+
+    this->_food = new Food(fx, fy);
     this->_snake.push_back(new Snake(x/2, y/2));
     this->_snake.push_back(new Snake(x/2, y/2 + 1));
     this->_snake.push_back(new Snake(x/2, y/2 + 2));
@@ -68,16 +82,17 @@ void Game::initialise(int x, int y){
     this->_startTime = std::chrono::high_resolution_clock::now();
     this->_t1 = this->_startTime;
     this->_speed = 5.0;
-    if ((this->_libhandle = dlopen(this->_libPath.c_str(), RTLD_LAZY))) {
-        this->render = (render_t) dlsym(this->_libhandle, "render");
-        this->init = (init_t) dlsym(this->_libhandle, "init");
-        this->endGame = (endGame_t) dlsym(this->_libhandle, "endGame");
-        this->closeWindow = (closeWindow_t) dlsym(this->_libhandle, "closeWindow");
-        this->getInput = (getInput_t) dlsym(this->_libhandle, "getInput");
-    } else {
-        std::cerr << "Failed to load " + this->_libPath << std::endl;
-        exit (1);
-    }
+    // if ((this->_libhandle = dlopen(this->_libPath.c_str(), RTLD_LAZY))) {
+    //     this->render = (render_t) dlsym(this->_libhandle, "render");
+    //     this->init = (init_t) dlsym(this->_libhandle, "init");
+    //     this->endGame = (endGame_t) dlsym(this->_libhandle, "endGame");
+    //     this->closeWindow = (closeWindow_t) dlsym(this->_libhandle, "closeWindow");
+    //     this->getInput = (getInput_t) dlsym(this->_libhandle, "getInput");
+    // } else {
+    //     std::cerr << "Failed to load " + this->_libPath << std::endl;
+    //     exit (1);
+    // }
+    this->loadLib();
     this->init(this->_width, this->_height);
 }
 
@@ -151,10 +166,25 @@ void Game::handleInput(int command) {
         }
         break;
     case 6:
+        this->closeWindow();
+        dlclose(this->_libhandle);
+        this->_libPath = "dlib1/ncurses.dylib";
+        this->loadLib();
+        this->init(this->_width, this->_height);
         break;
     case 7:
+        this->closeWindow();
+        dlclose(this->_libhandle);
+        this->_libPath = "dlib2/???.dylib";
+        this->loadLib();
+        this->init(this->_width, this->_height);
         break;
     case 8:
+        this->closeWindow();
+        dlclose(this->_libhandle);
+        this->_libPath = "dlib3/sdl.dylib";
+        this->loadLib();
+        this->init(this->_width, this->_height);
         break;
     default:
         this->moveSnake();
@@ -236,8 +266,38 @@ void Game::checkCollision() {
     }
     if (snakex == this->_food->getPosx() && snakey == this->_food->getPosy()) {
         delete this->_food;
-        this->_food = new Food(rand()%(this->_width), rand()%(this->_height));
+        bool check = true;
+        int x, y;
+        while (check) {
+            y = rand()%(this->_height);
+            x = rand()%(this->_width); 
+            check = false;
+            for (std::list<Snake*>::iterator it=this->_snake.begin(); it!=(this->_snake.end()); ++it) {
+                if (x == (*it)->getPosx() && y == (*it)->getPosy()) {
+                    check = true;
+                    break;
+                }
+            }
+        }
+
+        this->_food = new Food(x, y);
         this->_snake.push_back(new Snake(-1, -1));
+    }
+}
+
+void Game::loadLib() {
+    typedef void (*render_t)(GameState*), (*init_t)(int, int), (*endGame_t)(void), (*closeWindow_t)(void);
+    typedef int (*getInput_t)(void);
+    
+    if ((this->_libhandle = dlopen(this->_libPath.c_str(), RTLD_LAZY))) {
+        this->render = (render_t) dlsym(this->_libhandle, "render");
+        this->init = (init_t) dlsym(this->_libhandle, "init");
+        this->endGame = (endGame_t) dlsym(this->_libhandle, "endGame");
+        this->closeWindow = (closeWindow_t) dlsym(this->_libhandle, "closeWindow");
+        this->getInput = (getInput_t) dlsym(this->_libhandle, "getInput");
+    } else {
+        std::cerr << "Failed to load " + this->_libPath << std::endl;
+        exit (1);
     }
 }
 

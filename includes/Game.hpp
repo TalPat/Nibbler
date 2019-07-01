@@ -33,6 +33,7 @@ public:
   void handleInput(int command);
   void moveSnake();
   void updateGameState();
+  void loadLib();
 
   Food* getFood(void);
   std::list<Snake*> getSnake(void);
