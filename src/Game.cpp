@@ -6,7 +6,7 @@
 #include <unistd.h>
 
 Game::Game():
-_libPath("./dlib1/ncurses.dylib"), _fps(60), _input(0), _gameOver(false), _gameStarted(false) //.dylib for mac & .so for linux
+_libPath("./dlib3/sdl.dylib"), _fps(60), _input(0), _gameOver(false), _gameStarted(false) //.dylib for mac & .so for linux
 {
     srand(time(NULL));
     this->_gameState = new GameState;
@@ -225,6 +225,7 @@ void Game::checkCollision() {
     it++;
 
     if (snakex < 0 || snakex >= this->_width || snakey < 0 || snakey >= this->_height) {
+        this->closeWindow();
         exit(1);
     }
     for (; it!=(this->_snake.end()); ++it) {

@@ -1,6 +1,7 @@
 #include "GameState.hpp"
 #include <ncurses.h>
 #include <iostream>
+#include <unistd.h>
 
 WINDOW * win;
 
@@ -34,6 +35,7 @@ extern "C" void endGame() {
 }
 
 extern "C" void closeWindow() {
+  /* */sleep(2);
   werase(win);
   wrefresh(win);
   endwin();

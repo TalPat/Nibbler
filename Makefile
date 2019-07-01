@@ -12,7 +12,7 @@ OBJ				=	$(SRC:%.cpp=%.o)
 OBJPATH		:=	$(addprefix $(OBJDIR), $(OBJ))
 
 HEADER		=	./includes/
-CFLAGS		=	#-Wall -Werror -Wextra
+CFLAGS		= #-Wall -Werror -Wextra
 CC				=	clang++
 INCLUDES	=	-I $(HEADER)
 
@@ -22,7 +22,7 @@ LIBLINK		= $(addprefix -l, $(LIB))
 all: $(NAME)
 
 $(NAME): $(OBJPATH)
-	$(CC) -o $(NAME) $(SRCPATH) $(INCLUDES) $(CFLAGS) $(LIBLINK)
+	$(CC) -o $(NAME) $(SRCPATH) $(INCLUDES) $(CFLAGS) $(LIBLINK) -ldl
 
 $(OBJDIR)%.o: $(SRCDIR)%.cpp
 	mkdir -p $(OBJDIR)
