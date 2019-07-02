@@ -1,9 +1,8 @@
 #include "GameState.hpp"
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <iostream>
 
 SDL_Window* win;
-SDL_Surface* surface;
 SDL_Renderer* sdlRender;
 
 void drawtTri(int x, int y, int dir) {
@@ -35,11 +34,9 @@ extern "C" void init(int x, int y) {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     std::cout << "SDL could not initialize. Error: " << SDL_GetError() << std::endl;
   } else {
-    win = SDL_CreateWindow("Nibbler", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, x * 10, y * 10, SDL_WINDOW_SHOWN);
+    win = SDL_CreateWindow("Nibbler", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, x * 10, y * 10, SDL_WINDOW_OPENGL);
     if (win == NULL) {
       std::cout << "SDL window could not initialize. Error: " << SDL_GetError() << std::endl;
-    } else {
-      surface = SDL_GetWindowSurface(win);
     }
   }
   sdlRender = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
@@ -61,14 +58,14 @@ extern "C" void render(GameState* game) {
   for (; it != game->snake.end(); it++) {
     rect.x = (*it)->x * 10;
     rect.y = (*it)->y * 10;
+    if((*it)->x > -1)
     SDL_RenderDrawRect(sdlRender, &rect);
   }
   rect.x = game->food->x * 10;
   rect.y = game->food->y * 10;
   SDL_SetRenderDrawColor(sdlRender, 255, 0, 0, 255);
   SDL_RenderFillRect(sdlRender, &rect);
-
-  //* */std::cout << "rendered" << std::endl;
+  
   SDL_SetRenderDrawColor(sdlRender, 0, 0, 0, 255);
   SDL_RenderPresent(sdlRender);
 }
@@ -88,7 +85,7 @@ extern "C" int getInput() {
 
   SDL_PollEvent( &event );
   if (event.type == SDL_KEYDOWN) {
-    /* */std::cout << event.key.keysym.sym << std::endl;
+    //* */std::cout << event.key.keysym.sym << std::endl;
     switch (event.key.keysym.sym)
     {
     case SDLK_UP:

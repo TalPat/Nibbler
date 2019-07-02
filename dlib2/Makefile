@@ -1,8 +1,7 @@
 CC=clang++
 CFLAGS=#-Wall -Werror -Wextra
-BINS=ncurses.dylib
-LIB= ncurses
-LIBLINK= -l$(LIB)
+BINS=glfw.dylib
+LIBLINK= $(shell --cflags --libs glfw)
 HEADER		=	../includes/
 INCLUDES	=	-I $(HEADER)
 

@@ -42,6 +42,7 @@ extern "C" void render(GameState* game) {
   }
   it++;
   for (; it != game->snake.end(); it++) {
+    if((*it)->x > -1)
     mvwprintw(win, (*it)->y + 1, (*it)->x + 1, "O");
   }
   mvwprintw(win, game->food->y + 1, game->food->x + 1, "*");

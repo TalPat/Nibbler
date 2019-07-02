@@ -2,7 +2,7 @@ CC=clang++
 CFLAGS=#-Wall -Werror -Wextra
 BINS=sdl.dylib
 LIB= SDL2
-LIBLINK= -l$(LIB)
+LIBLINK=  $(shell pkg-config --cflags --libs sdl2)
 HEADER		=	../includes/
 INCLUDES	=	-I $(HEADER)
 

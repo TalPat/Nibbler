@@ -53,8 +53,6 @@ Game& Game::operator=(const Game &obj){
 }
 
 void Game::initialise(int x, int y){
-    // typedef void (*render_t)(GameState*), (*init_t)(int, int), (*endGame_t)(void), (*closeWindow_t)(void);
-    // typedef int (*getInput_t)(void);
 
     this->_width = x;
     this->_height = y;
@@ -78,27 +76,17 @@ void Game::initialise(int x, int y){
     this->_snake.push_back(new Snake(x/2, y/2 + 2));
     this->_snake.push_back(new Snake(x/2, y/2 + 3));
     this->_snake.push_back(new Snake(x/2, y/2 + 4));
-    //* */for (size_t i = 0; i < 9999; i++) this->_snake.push_back(new Snake(x/2, y/2 + 4));
     this->_startTime = std::chrono::high_resolution_clock::now();
     this->_t1 = this->_startTime;
-    this->_speed = 5.0;
-    // if ((this->_libhandle = dlopen(this->_libPath.c_str(), RTLD_LAZY))) {
-    //     this->render = (render_t) dlsym(this->_libhandle, "render");
-    //     this->init = (init_t) dlsym(this->_libhandle, "init");
-    //     this->endGame = (endGame_t) dlsym(this->_libhandle, "endGame");
-    //     this->closeWindow = (closeWindow_t) dlsym(this->_libhandle, "closeWindow");
-    //     this->getInput = (getInput_t) dlsym(this->_libhandle, "getInput");
-    // } else {
-    //     std::cerr << "Failed to load " + this->_libPath << std::endl;
-    //     exit (1);
-    // }
+    this->_speed = 6.0;
     this->loadLib();
     this->init(this->_width, this->_height);
 }
 
 void Game::gameLoop(){
+    /* */int x;
     int i = 0;
-    int loopDelay = 1 / this->_speed;
+    int loopDelay = 100000 / this->_speed;
 
     while (1){
 
@@ -109,12 +97,14 @@ void Game::gameLoop(){
             this->_input = -1;
             this->checkCollision();
             this->_t1 = std::chrono::high_resolution_clock::now();
+            //* */std::cout << x << std::endl; x =0;
         }
         this->updateGameState();
         this->render(this->_gameState);
         usleep(loopDelay);
         if ((i = this->getInput()) != -1)
         this->_input = i;
+        /* */x++;
     }
 
 }
@@ -171,6 +161,12 @@ void Game::handleInput(int command) {
         this->_libPath = "dlib1/ncurses.dylib";
         this->loadLib();
         this->init(this->_width, this->_height);
+        while (1) {
+            this->render(this->_gameState);
+            if (this->getInput() == 5) {
+                break;
+            }
+        }
         break;
     case 7:
         this->closeWindow();
@@ -178,6 +174,12 @@ void Game::handleInput(int command) {
         this->_libPath = "dlib2/???.dylib";
         this->loadLib();
         this->init(this->_width, this->_height);
+        while (1) {
+            this->render(this->_gameState);
+            if (this->getInput() == 5) {
+                break;
+            }
+        }
         break;
     case 8:
         this->closeWindow();
@@ -185,6 +187,12 @@ void Game::handleInput(int command) {
         this->_libPath = "dlib3/sdl.dylib";
         this->loadLib();
         this->init(this->_width, this->_height);
+        while (1) {
+            this->render(this->_gameState);
+            if (this->getInput() == 5) {
+                break;
+            }
+        }
         break;
     default:
         this->moveSnake();
