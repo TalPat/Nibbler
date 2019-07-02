@@ -20,10 +20,28 @@ extern "C" void init(int x, int y) {
 }
 
 extern "C" void render(GameState* game) {
-  std::list<SnakeSt*>::iterator it;
+  std::list<SnakeSt*>::iterator it = game->snake.begin();
   werase(win);
   box(win, 0 ,0);
-  for (it = game->snake.begin(); it != game->snake.end(); it++) {
+  switch ((*it)->direction)
+  {
+    case 0:
+      mvwprintw(win, (*it)->y + 1, (*it)->x + 1, "^");
+      break;
+    case 1:
+      mvwprintw(win, (*it)->y + 1, (*it)->x + 1, ">");
+      break;
+    case 2:
+      mvwprintw(win, (*it)->y + 1, (*it)->x + 1, "v");
+      break;
+    case 3:
+      mvwprintw(win, (*it)->y + 1, (*it)->x + 1, "<");
+      break;
+    default:
+      break;
+  }
+  it++;
+  for (; it != game->snake.end(); it++) {
     mvwprintw(win, (*it)->y + 1, (*it)->x + 1, "O");
   }
   mvwprintw(win, game->food->y + 1, game->food->x + 1, "*");
