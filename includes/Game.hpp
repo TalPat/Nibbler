@@ -12,7 +12,7 @@ class Game
 {
 private:
   std::string _libPath;
-  int _width, _height, _fps, _input;
+  int _width, _height, _fps, _input, _score;
   double _speed;
   std::chrono::high_resolution_clock::time_point _startTime, _t1, _t2;
   Food* _food;

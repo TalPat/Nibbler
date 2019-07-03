@@ -6,7 +6,7 @@
 #include <unistd.h>
 
 Game::Game():
-_libPath("./dlib3/sdl.dylib"), _fps(60), _input(0), _gameOver(false), _gameStarted(false) //.dylib for mac & .so for linux
+_libPath("./dlib3/sdl.dylib"), _fps(60), _input(0), _gameOver(false), _gameStarted(false), _score(0) //.dylib for mac & .so for linux
 {
     srand(time(NULL));
     this->_gameState = new GameState;
@@ -26,6 +26,7 @@ Game::Game(const Game &obj){
     this->_width = obj._width;
     this->_speed = obj._speed;
     this->_gameState = obj._gameState;
+    this->_score = obj._score;
 }
 
 Game::~Game(){
@@ -48,6 +49,7 @@ Game& Game::operator=(const Game &obj){
         this->_width = obj._width;
         this->_speed = obj._speed;
         this->_gameState = obj._gameState;
+        this->_score = obj._score;
     }
     return (*this);
 }
@@ -171,7 +173,7 @@ void Game::handleInput(int command) {
     case 7:
         this->closeWindow();
         dlclose(this->_libhandle);
-        this->_libPath = "dlib2/???.dylib";
+        this->_libPath = "dlib2/sfml.dylib";
         this->loadLib();
         this->init(this->_width, this->_height);
         while (1) {
@@ -209,6 +211,7 @@ void Game::moveSnake() {
         for (std::list<Snake*>::reverse_iterator rit=this->_snake.rbegin(); ritNext!=(this->_snake.rend()); ++rit) {
             (*rit)->setPosx((*ritNext)->getPosx());
             (*rit)->setPosy((*ritNext)->getPosy());
+            (*rit)->setDirection((*ritNext)->getDirection());
             ++ritNext;
         }
         this->_snake.front()->setPosy(this->_snake.front()->getPosy() - 1);
@@ -217,6 +220,7 @@ void Game::moveSnake() {
         for (std::list<Snake*>::reverse_iterator rit=this->_snake.rbegin(); ritNext!=(this->_snake.rend()); ++rit) {
             (*rit)->setPosx((*ritNext)->getPosx());
             (*rit)->setPosy((*ritNext)->getPosy());
+            (*rit)->setDirection((*ritNext)->getDirection());
             ++ritNext;
         }
         this->_snake.front()->setPosx(this->_snake.front()->getPosx() + 1);
@@ -225,6 +229,7 @@ void Game::moveSnake() {
         for (std::list<Snake*>::reverse_iterator rit=this->_snake.rbegin(); ritNext!=(this->_snake.rend()); ++rit) {
             (*rit)->setPosx((*ritNext)->getPosx());
             (*rit)->setPosy((*ritNext)->getPosy());
+            (*rit)->setDirection((*ritNext)->getDirection());
             ++ritNext;
         }
         this->_snake.front()->setPosy(this->_snake.front()->getPosy() + 1);
@@ -233,6 +238,7 @@ void Game::moveSnake() {
         for (std::list<Snake*>::reverse_iterator rit=this->_snake.rbegin(); ritNext!=(this->_snake.rend()); ++rit) {
             (*rit)->setPosx((*ritNext)->getPosx());
             (*rit)->setPosy((*ritNext)->getPosy());
+            (*rit)->setDirection((*ritNext)->getDirection());
             ++ritNext;
         }
         this->_snake.front()->setPosx(this->_snake.front()->getPosx() - 1);
@@ -254,6 +260,7 @@ void Game::updateGameState() {
         mySnake->direction = (*it)->getDirection();
         this->_gameState->snake.push_back(mySnake);
     }
+    this->_gameState->score = this->_score;
 }
 
 void Game::checkCollision() {
@@ -290,6 +297,7 @@ void Game::checkCollision() {
 
         this->_food = new Food(x, y);
         this->_snake.push_back(new Snake(-1, -1));
+        this->_score++;
     }
 }
 
@@ -304,7 +312,7 @@ void Game::loadLib() {
         this->closeWindow = (closeWindow_t) dlsym(this->_libhandle, "closeWindow");
         this->getInput = (getInput_t) dlsym(this->_libhandle, "getInput");
     } else {
-        std::cerr << "Failed to load " + this->_libPath << std::endl;
+        std::cerr << "Failed to load " + this->_libPath << std::endl << dlerror() << std::endl;
         exit (1);
     }
 }
