@@ -1,10 +1,10 @@
 NAME			=	nibbler
 SRCDIR		=	./src/
-SRC				=	main.cpp\
-						Game.cpp\
-						Entity.cpp\
-						Food.cpp\
-						Snake.cpp
+SRC				= 	main.cpp\
+					Game.cpp\
+					Entity.cpp\
+					Food.cpp\
+					Snake.cpp
 
 SRCPATH		:=	$(addprefix $(SRCDIR), $(SRC))
 OBJDIR		=	obj/
@@ -19,7 +19,7 @@ INCLUDES	=	-I $(HEADER)
 LIB			= 
 LIBLINK		= $(addprefix -l, $(LIB))
 
-all: $(NAME)
+all: $(NAME) libs
 
 $(NAME): $(OBJPATH)
 	$(CC) -o $(NAME) $(SRCPATH) $(INCLUDES) $(CFLAGS) $(LIBLINK) -ldl
@@ -28,6 +28,15 @@ $(OBJDIR)%.o: $(SRCDIR)%.cpp
 	mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) -c -o $@ $< $(INCLUDES)
 
+libs: dependancies
+	make -C ./dlib1
+	make -C ./dlib2
+	make -C ./dlib3
+
+dependancies:
+	#sh -c "$(curl -fsSL https://raw.githubusercontent.com/Tolsadus/42homebrewfix/master/install.sh)" to install brew
+	brew list sdl2 &>/dev/null || brew install sdl2
+	brew list pkg-config &>/dev/null || brew install pkg-config
 clean:
 	rm -rf $(OBJPATH)
 

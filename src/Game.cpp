@@ -6,7 +6,7 @@
 #include <unistd.h>
 
 Game::Game():
-_libPath("./dlib3/sdl.dylib"), _fps(60), _input(0), _gameOver(false), _gameStarted(false), _score(0) //.dylib for mac & .so for linux
+_libPath("./dlib3/sdl2.dylib"), _fps(60), _input(0), _gameOver(false), _gameStarted(false), _score(0) //.dylib for mac & .so for linux
 {
     srand(time(NULL));
     this->_gameState = new GameState;
@@ -173,7 +173,7 @@ void Game::handleInput(int command) {
     case 7:
         this->closeWindow();
         dlclose(this->_libhandle);
-        this->_libPath = "dlib2/sfml.dylib";
+        this->_libPath = "dlib2/sdl1.dylib";
         this->loadLib();
         this->init(this->_width, this->_height);
         while (1) {
@@ -186,7 +186,7 @@ void Game::handleInput(int command) {
     case 8:
         this->closeWindow();
         dlclose(this->_libhandle);
-        this->_libPath = "dlib3/sdl.dylib";
+        this->_libPath = "dlib3/sdl2.dylib";
         this->loadLib();
         this->init(this->_width, this->_height);
         while (1) {

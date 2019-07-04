@@ -1,7 +1,7 @@
 CC=clang++
 CFLAGS=#-Wall -Werror -Wextra
-BINS=sfml.dylib
-LIBLINK= $(shell pkg-config --cflags --libs sfml-graphics sfml-window)
+BINS=sdl1.dylib
+LIBLINK= $(shell pkg-config --cflags --libs sdl2)
 HEADER		=	../includes/
 INCLUDES	=	-I $(HEADER)
 
