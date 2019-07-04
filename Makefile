@@ -35,12 +35,15 @@ libs: dependancies
 
 dependancies:
 	#sh -c "$(curl -fsSL https://raw.githubusercontent.com/Tolsadus/42homebrewfix/master/install.sh)" to install brew
-	brew list sdl2 &>/dev/null || brew install sdl2
-	brew list pkg-config &>/dev/null || brew install pkg-config
+	brew list sdl2 || brew install sdl2
+	brew list pkg-config || brew install pkg-config
 clean:
 	rm -rf $(OBJPATH)
 
 fclean:	clean
 	rm -rf $(NAME)
+	make clean -C ./dlib1
+	make clean -C ./dlib2
+	make clean -C ./dlib3
 
 re: fclean all

@@ -2,19 +2,24 @@
 #include <ncurses.h>
 #include <iostream>
 #include <unistd.h>
+#include <sstream>
 
 WINDOW * win;
+WINDOW* scoreBox;
 
 extern "C" void init(int x, int y) {
   initscr();
   curs_set(0);
   refresh();
   win = newwin(y+2, x+2, 0, 0);
+  scoreBox = newwin(3, x+2, y+2, 0);
   noecho();
   box(win, 0, 0);
+  box(scoreBox, 0, 0);
   keypad(stdscr, true);
   mvwprintw(win, y/2, (x/2)-(17/2), "PREPARE YOURSELF");
   wrefresh(win);
+  wrefresh(scoreBox);
   //getch();
   nodelay(stdscr, true);
 }
@@ -47,6 +52,16 @@ extern "C" void render(GameState* game) {
   }
   mvwprintw(win, game->food->y + 1, game->food->x + 1, "*");
   wrefresh(win);
+
+  werase(scoreBox);
+  box(scoreBox,0, 0);
+
+  std::string out_string;
+  std::stringstream ss;
+  ss << game->score;
+  out_string = ss.str();
+  mvwprintw(scoreBox, 1, 1, out_string.c_str());
+  wrefresh(scoreBox);
 }
 
 extern "C" void endGame() {

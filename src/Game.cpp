@@ -30,7 +30,7 @@ Game::Game(const Game &obj){
 }
 
 Game::~Game(){
-    delete _food;
+    // delete _food;
     // delete snake list
 
 }
@@ -298,6 +298,7 @@ void Game::checkCollision() {
         this->_food = new Food(x, y);
         this->_snake.push_back(new Snake(-1, -1));
         this->_score++;
+        this->_speed = this->_speed+1;
     }
 }
 
