@@ -1,5 +1,5 @@
 CC=clang++
-CFLAGS=#-Wall -Werror -Wextra
+CFLAGS= -Wall -Werror -Wextra
 BINS=sdl1.dylib
 LIBLINK= $(shell pkg-config --cflags --libs sdl2)
 HEADER		=	../includes/

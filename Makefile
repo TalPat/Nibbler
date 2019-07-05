@@ -12,7 +12,7 @@ OBJ				=	$(SRC:%.cpp=%.o)
 OBJPATH		:=	$(addprefix $(OBJDIR), $(OBJ))
 
 HEADER		=	./includes/
-CFLAGS		= #-Wall -Werror -Wextra
+CFLAGS		= -Wall -Werror -Wextra
 CC				=	clang++
 INCLUDES	=	-I $(HEADER)
 

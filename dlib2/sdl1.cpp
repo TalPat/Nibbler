@@ -75,7 +75,7 @@ extern "C" void endGame() {
 }
 
 extern "C" void closeWindow() {
-  std::cout << "Game Over!" << std::endl;
+  std::cout << "Window Closed!" << std::endl;
   SDL_DestroyWindow(win);
   SDL_Quit();
 }

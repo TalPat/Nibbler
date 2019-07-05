@@ -6,7 +6,7 @@
 #include <unistd.h>
 
 Game::Game():
-_libPath("./dlib3/sdl2.dylib"), _fps(60), _input(0), _gameOver(false), _gameStarted(false), _score(0) //.dylib for mac & .so for linux
+_libPath("./dlib3/sdl2.dylib"), _fps(60), _input(0), _score(0) //.dylib for mac & .so for linux
 {
     srand(time(NULL));
     this->_gameState = new GameState;
@@ -17,8 +17,6 @@ Game::Game(const Game &obj){
     this->_libPath = obj._libPath;
     *(this->_food) = *(obj._food);
     this->_fps = obj._fps;
-    this->_gameOver = obj._gameOver;
-    this->_gameStarted = obj._gameStarted;
     this->_height = obj._height;
     this->_input = obj._input;
     this->_snake = std::list<Snake*> (obj._snake);
@@ -40,8 +38,6 @@ Game& Game::operator=(const Game &obj){
         this->_libPath = obj._libPath;
         *(this->_food) = *(obj._food);
         this->_fps = obj._fps;
-        this->_gameOver = obj._gameOver;
-        this->_gameStarted = obj._gameStarted;
         this->_height = obj._height;
         this->_input = obj._input;
         this->_snake = std::list<Snake*> (obj._snake);
@@ -86,7 +82,7 @@ void Game::initialise(int x, int y){
 }
 
 void Game::gameLoop(){
-    /* */int x;
+    /* */int x = 0;
     int i = 0;
     int loopDelay = 100000 / this->_speed;
 

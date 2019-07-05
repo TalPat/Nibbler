@@ -17,7 +17,6 @@ private:
   std::chrono::high_resolution_clock::time_point _startTime, _t1, _t2;
   Food* _food;
   std::list<Snake*> _snake;
-  bool _gameOver, _gameStarted;
   void (*render)(GameState*), (*init)(int, int), (*endGame)(void), (*closeWindow)(void), *_libhandle;
   int (*getInput)(void);
   GameState* _gameState;

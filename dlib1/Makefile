@@ -1,5 +1,5 @@
 CC=clang++
-CFLAGS=#-Wall -Werror -Wextra
+CFLAGS= -Wall -Werror -Wextra
 BINS=ncurses.dylib
 LIB= ncurses
 LIBLINK= -l$(LIB)
