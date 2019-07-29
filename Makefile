@@ -34,7 +34,7 @@ libs: dependancies
 	make -C ./dlib3
 
 dependancies:
-	#sh -c "$(curl -fsSL https://raw.githubusercontent.com/Tolsadus/42homebrewfix/master/install.sh)" to install brew
+	sh -c "$(curl -fsSL https://raw.githubusercontent.com/Tolsadus/42homebrewfix/master/install.sh)"
 	brew list sdl2 || brew install sdl2
 	brew list pkg-config || brew install pkg-config
 clean:
